@@ -24,11 +24,11 @@ impl std::error::Error for Failure {}
 
 impl fmt::Display for Failure {
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        match self.fail_type {
+        match &self.fail_type {
             FailureType::File { file_name, description, cause } => {
-                write!(f, "\tFile: {}\n\tDescription: {}", file_name, description)?;
+                write!(f, "\tFile: {}\n\tDescription: {}", *file_name, *description)?;
                 if cause.is_some() {
-                    write!(f, "\n\tCause: {}", cause.unwrap())?;
+                    write!(f, "\n\tCause: {}", *cause.unwrap())?;
                 }
             }
             FailureType::Env { operation, cause } => {
@@ -43,7 +43,7 @@ impl fmt::Display for Failure {
 }
 
 impl Failure {
-    pub fn env_failure_caused<E: Error>(operation: String, cause: E) -> Failure {
+    pub fn env_failure_caused<E: Error + 'static>(operation: String, cause: E) -> Failure {
         Failure {
             fail_type: FailureType::Env {
                 operation,

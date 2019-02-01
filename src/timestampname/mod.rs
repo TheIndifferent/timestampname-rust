@@ -10,5 +10,6 @@ pub struct CommandLineArguments {
 }
 
 pub fn execute(cwd: PathBuf, cmd_args: CommandLineArguments) -> Result<(), failures::Failure> {
+    println!("path: {}, args: {}", cwd.to_str().unwrap(), cmd_args.debug_output);
     return Ok(())
 }

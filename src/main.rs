@@ -44,6 +44,7 @@ fn main() {
         Err(e) => {
             eprintln!("Failure:\n{}\n", e);
             process::exit(1);
-        }
+        },
+        Ok(_) => {}
     }
 }
