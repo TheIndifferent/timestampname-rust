@@ -1,5 +1,4 @@
 use std::path::PathBuf;
-use std::error::Error;
 
 pub mod failures;
 
@@ -10,6 +9,6 @@ pub struct CommandLineArguments {
     pub utc: bool
 }
 
-pub fn execute(cwd: PathBuf, cmd_args: CommandLineArguments) -> Result<(), Error> {
+pub fn execute(cwd: PathBuf, cmd_args: CommandLineArguments) -> Result<(), failures::Failure> {
     return Ok(())
 }

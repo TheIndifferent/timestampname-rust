@@ -3,37 +3,52 @@ use std::fmt::Formatter;
 use std::error::Error;
 
 #[derive(Debug)]
-pub struct FileError {
-    file_name: String,
-    description: String,
-    cause: Option<Box<Error>>
+enum FailureType {
+    File {
+        file_name: String,
+        description: String,
+        cause: Option<Box<Error>>,
+    },
+    Env {
+        operation: String,
+        cause: Option<Box<Error>>,
+    },
 }
 
 #[derive(Debug)]
-pub struct EnvError {
-    operation: String,
-    cause: Option<Box<Error>>
+pub struct Failure {
+    fail_type: FailureType
 }
 
-impl std::error::Error for FileError {}
-impl std::error::Error for EnvError {}
+impl std::error::Error for Failure {}
 
-impl fmt::Display for FileError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "\tFile: {}\n\tDescription: {}", self.file_name, self.description)?;
-        if self.cause.is_some() {
-            write!(f, "\n\tCause: {}", self.cause.unwrap())?;
-        }
-        return Ok(())
+impl fmt::Display for Failure {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+        match self.fail_type {
+            FailureType::File { file_name, description, cause } => {
+                write!(f, "\tFile: {}\n\tDescription: {}", file_name, description)?;
+                if cause.is_some() {
+                    write!(f, "\n\tCause: {}", cause.unwrap())?;
+                }
+            }
+            FailureType::Env { operation, cause } => {
+                write!(f, "\tOperation: {}", operation)?;
+                if cause.is_some() {
+                    write!(f, "\n\tCause: {}", cause.unwrap())?;
+                }
+            }
+        };
+        return Ok(());
     }
 }
 
-impl fmt::Display for EnvError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "\tOperation: {}", self.description)?;
-        if self.cause.is_some() {
-            write!(f, "\n\tCause: {}", self.cause.unwrap())?;
+impl Failure {
+    pub fn env_failure_caused<E: Error>(operation: String, cause: E) -> Failure {
+        Failure {
+            fail_type: FailureType::Env {
+                operation,
+                cause: Option::Some(Box::new(cause)),
+            }
         }
-        return Ok(())
     }
 }

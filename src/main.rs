@@ -37,10 +37,9 @@ fn main() {
     };
 
     match env::current_dir()
-        .map_err(|e| timestampname::failures::EnvError {
-            operation: "Get current working directory".to_string(),
-            cause: e
-        })
+        .map_err(|e|
+            timestampname::failures::Failure::env_failure_caused(
+                "Get current working directory".to_string(), e))
         .and_then(|path| timestampname::execute(path, cmd_args)) {
         Err(e) => {
             eprintln!("Failure:\n{}\n", e);
