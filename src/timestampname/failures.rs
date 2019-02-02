@@ -7,11 +7,11 @@ enum FailureType {
     File {
         file_name: String,
         description: String,
-        cause: String
+        cause: String,
     },
     Env {
         operation: String,
-        cause: String
+        cause: String,
     },
 }
 
@@ -41,6 +41,29 @@ impl Failure {
         Failure {
             fail_type: FailureType::Env {
                 operation,
+                cause: format!("\n\tCause: {}", cause),
+            }
+        }
+    }
+
+    pub fn file_failure(file_name: String,
+                        description: String) -> Failure {
+        Failure {
+            fail_type: FailureType::File {
+                file_name,
+                description,
+                cause: "".to_string(),
+            }
+        }
+    }
+
+    pub fn file_failure_caused<E: Error>(file_name: String,
+                                         description: String,
+                                         cause: E) -> Failure {
+        Failure {
+            fail_type: FailureType::File {
+                file_name,
+                description,
                 cause: format!("\n\tCause: {}", cause),
             }
         }
