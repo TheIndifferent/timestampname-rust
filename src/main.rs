@@ -8,7 +8,7 @@ fn main() {
     let mut no_prefix: bool = false;
     let mut debug_output: bool = false;
     let mut utc: bool = false;
-    for arg in env::args() {
+    for arg in env::args().skip(1) {
         match arg.as_ref() {
             "-dry" => {
                 dry_run = true;
@@ -22,8 +22,11 @@ fn main() {
             "-utc" => {
                 utc = true;
             },
+            "-h" => {
+                unimplemented!("show help and exit")
+            },
             _ => {
-                eprintln!("unrecognized argument: {}", arg);
+                eprintln!("Unrecognized argument: {}", arg);
                 process::exit(1);
             }
         }
