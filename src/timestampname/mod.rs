@@ -7,7 +7,7 @@ use std::fs::ReadDir;
 use std::io;
 use std::path::PathBuf;
 
-use crate::timestampname::failures::Failure;
+use super::timestampname::failures::Failure;
 
 pub struct CommandLineArguments {
     pub dry_run: bool,
