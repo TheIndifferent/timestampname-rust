@@ -68,4 +68,16 @@ impl Failure {
             }
         }
     }
+
+    pub fn file_failure_strcause(file_name: String,
+                                 description: String,
+                                 cause: String) -> Failure {
+        Failure {
+            fail_type: FailureType::File {
+                file_name,
+                description,
+                cause
+            }
+        }
+    }
 }
