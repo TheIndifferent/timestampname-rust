@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-use std::path::PathBuf;
 
 use super::FileMetadata;
 use super::RenameOperation;
@@ -56,18 +55,14 @@ pub fn prepare_rename_operations(mut items: Vec<FileMetadata>, no_prefix: bool) 
 
     let mut operations: Vec<RenameOperation> = Vec::new();
     for (i, f) in sorted.iter().enumerate() {
-        let ext: String = PathBuf::from(&f.file_name)
-            .extension()
-            .and_then(|x| x.to_str())
-            .map_or("".to_string(), |x| format!(".{}", x));
         let to: String = match no_prefix {
             true => format!("{}{}",
                             f.creation_timestamp,
-                            ext),
+                            f.extension),
             false => format!("{:width$}-{}{}",
                              i + 1,
                              f.creation_timestamp,
-                             ext,
+                             f.extension,
                              width = prefix_width)
         };
         let operation = RenameOperation {

@@ -2,6 +2,7 @@ pub mod failures;
 mod renamer;
 mod verifier;
 mod executor;
+mod extractor;
 
 use std::fs::ReadDir;
 use std::io;
@@ -19,6 +20,7 @@ pub struct CommandLineArguments {
 pub struct FileMetadata {
     file_name: String,
     creation_timestamp: String,
+    extension: String
 }
 
 pub struct RenameOperation {
@@ -80,7 +82,7 @@ fn process_files(files: Vec<PathBuf>, utc: bool) -> Result<CollectedMetadata, Fa
     let mut longest_source_name: usize = 0;
     for (index, element) in files.iter().enumerate() {
         print!("\rProcessing files: {}/{}...", index + 1, files.len());
-        let md: Option<FileMetadata> = extract_creation_timestamp(element)?;
+        let md: Option<FileMetadata> = extractor::extract_metadata_creation_timestamp(element)?;
         match md {
             Some(x) => {
                 if x.file_name.len() > longest_source_name {
@@ -96,8 +98,4 @@ fn process_files(files: Vec<PathBuf>, utc: bool) -> Result<CollectedMetadata, Fa
         items: res,
         longest_source_name,
     });
-}
-
-fn extract_creation_timestamp(path: &PathBuf) -> Result<Option<FileMetadata>, Failure> {
-    return Ok(None);
 }
