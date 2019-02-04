@@ -6,6 +6,7 @@ use std::fs::File;
 use crate::timestampname::extractor::Endianness;
 use super::ByteRead;
 use std::error::Error;
+use std::io::SeekFrom;
 
 struct TiffError {
     description: String,
@@ -114,7 +115,7 @@ fn tiff_extract_metadata_creation_timestamp(input: &mut impl ByteRead) -> Result
             if next_date_offset < next_ifd_offset {
                 // TIFF collecting date at offset
                 date_tag_offsets.remove(0);
-                input.ff(next_date_offset as u64)
+                input.seek(SeekFrom::Start(next_date_offset as u64))
                     .map_err(|e| tiff_err_cause(
                         format!("TIFF failed to fast-forward to next date tag offset: {}", next_date_offset), e))?;
                 // reading 19 characters of string:
@@ -132,7 +133,7 @@ fn tiff_extract_metadata_creation_timestamp(input: &mut impl ByteRead) -> Result
             } else {
                 // TIFF scavenging IFD at offset
                 ifd_offsets.remove(0);
-                input.ff(next_ifd_offset as u64)
+                input.seek(SeekFrom::Start(next_ifd_offset as u64))
                     .map_err(|e| tiff_err_cause(
                         format!("TIFF failed to fast-forward to next IFD offset: {}", next_ifd_offset), e))?;
 
