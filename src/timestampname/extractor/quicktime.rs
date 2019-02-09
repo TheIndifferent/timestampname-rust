@@ -7,25 +7,28 @@ use super::Endianness;
 
 fn quicktime_scan_for_box(name: String,
                           uuid: Option<String>,
-                          input: &mut impl Input) {
+                          input: &mut impl Input) -> io::Result<ByteRead> {
     loop {
         let mut box_length: u64 = input.read_u32(&Endianness::Big)? as u64;
         let box_type: String = input.read_string(4)?;
         // checking for large box:
         if box_length == 1 {
             box_length = input.read_u64(&Endianness::Big)?;
-            // box lenght includes header, have to make adjustments:
+            // box length includes header, have to make adjustments:
             // 4 bytes for box length
             // 4 bytes for box type
             // 8 bytes for box large length
             box_length = box_length - 16;
         } else {
-            // box lenght includes header, have to make adjustments:
+            // box length includes header, have to make adjustments:
             // 4 bytes for box length
             // 4 bytes for box type
             box_length = box_length - 8;
         }
         if box_type == name {
+            match uuid {
+                None => return Ok(input.)
+            }
         }
     }
 }

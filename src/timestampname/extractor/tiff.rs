@@ -4,9 +4,8 @@ use super::FileMetadata;
 use super::Failure;
 use std::fs::File;
 use crate::timestampname::extractor::Endianness;
-use super::ByteRead;
 use std::error::Error;
-use std::io::SeekFrom;
+use super::Input;
 
 struct TiffError {
     description: String,
@@ -52,7 +51,7 @@ pub fn tiff_extract_metadata_creation_timestamp_file(path: &PathBuf, ext: &Strin
 }
 
 // https://www.adobe.io/content/dam/udp/en/open/standards/tiff/TIFF6.pdf
-fn tiff_extract_metadata_creation_timestamp(input: &mut impl ByteRead) -> Result<String, TiffError> {
+fn tiff_extract_metadata_creation_timestamp(input: &mut impl Input) -> Result<String, TiffError> {
     // Bytes 0-1: The byte order used within the file. Legal values are:
     // “II” (4949.H)
     // “MM” (4D4D.H)
@@ -115,7 +114,7 @@ fn tiff_extract_metadata_creation_timestamp(input: &mut impl ByteRead) -> Result
             if next_date_offset < next_ifd_offset {
                 // TIFF collecting date at offset
                 date_tag_offsets.remove(0);
-                input.seek(SeekFrom::Start(next_date_offset as u64))
+                input.seek(next_date_offset as u64)
                     .map_err(|e| tiff_err_cause(
                         format!("TIFF failed to fast-forward to next date tag offset: {}", next_date_offset), e))?;
                 // reading 19 characters of string:
@@ -133,7 +132,7 @@ fn tiff_extract_metadata_creation_timestamp(input: &mut impl ByteRead) -> Result
             } else {
                 // TIFF scavenging IFD at offset
                 ifd_offsets.remove(0);
-                input.seek(SeekFrom::Start(next_ifd_offset as u64))
+                input.seek(next_ifd_offset as u64)
                     .map_err(|e| tiff_err_cause(
                         format!("TIFF failed to fast-forward to next IFD offset: {}", next_ifd_offset), e))?;
 
