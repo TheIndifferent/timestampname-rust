@@ -2,10 +2,10 @@ use std::path::PathBuf;
 
 use super::FileMetadata;
 use super::Failure;
-use std::fs::File;
 use crate::timestampname::extractor::Endianness;
 use std::error::Error;
 use super::Input;
+use std::fs::File;
 
 struct TiffError {
     description: String,
@@ -31,12 +31,17 @@ pub fn tiff_extract_metadata_creation_timestamp_file(path: &PathBuf, ext: &Strin
         .and_then(|f| f.to_str())
         .map(|f| f.to_string())
         .expect("TIFF got path without a file name");
-    let mut open_file = File::open(path)
+    let mut file = File::open(path)
         .map_err(|e| Failure::file_failure_caused(
             file_name.to_string(),
             "failed to open file".to_string(),
             e))?;
-    return tiff_extract_metadata_creation_timestamp(&mut open_file)
+    let mut input = Input::create(&file)
+        .map_err(|e| Failure::file_failure_caused(
+            file_name.to_string(),
+            "failed to resolve file metadata".to_string(),
+            e))?;
+    return tiff_extract_metadata_creation_timestamp(&mut input)
         .map(|t| {
             Some(FileMetadata {
                 file_name: file_name.to_string(),
@@ -51,7 +56,7 @@ pub fn tiff_extract_metadata_creation_timestamp_file(path: &PathBuf, ext: &Strin
 }
 
 // https://www.adobe.io/content/dam/udp/en/open/standards/tiff/TIFF6.pdf
-fn tiff_extract_metadata_creation_timestamp(input: &mut impl Input) -> Result<String, TiffError> {
+fn tiff_extract_metadata_creation_timestamp(input: &mut Input) -> Result<String, TiffError> {
     // Bytes 0-1: The byte order used within the file. Legal values are:
     // “II” (4949.H)
     // “MM” (4D4D.H)

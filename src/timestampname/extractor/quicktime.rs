@@ -7,7 +7,7 @@ use super::Endianness;
 
 fn quicktime_scan_for_box(name: String,
                           uuid: Option<String>,
-                          input: &mut impl Input) -> io::Result<ByteRead> {
+                          input: &mut Input) -> io::Result<ByteRead> {
     loop {
         let mut box_length: u64 = input.read_u32(&Endianness::Big)? as u64;
         let box_type: String = input.read_string(4)?;
