@@ -10,8 +10,8 @@ use super::FileMetadata;
 use std::io::ErrorKind;
 
 mod tiff;
-//mod quicktime;
-//mod mp4;
+mod quicktime;
+mod mp4;
 
 pub fn extract_metadata_creation_timestamp(path: &PathBuf) -> Result<Option<FileMetadata>, Failure> {
     let ext: String = path.extension()
@@ -31,6 +31,8 @@ enum Endianness {
 }
 
 struct Input<'f> {
+    file_name: String,
+    file_ext: String,
     file: &'f File,
     offset: u64,
     limit: u64,
@@ -120,6 +122,10 @@ impl<'f> Input<'f> {
         self.file.seek(SeekFrom::Start(self.offset + pos))?;
         self.cursor = pos;
         return Ok(());
+    }
+    fn ff(&mut self, len: u64) -> io::Result<()> {
+        // TODO maybe implement with SeekFrom::Current?
+        return self.seek(self.cursor + len);
     }
     fn section(&mut self, len: u64) -> Input {
         return Input {
