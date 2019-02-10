@@ -56,7 +56,7 @@ pub fn execute(cwd: PathBuf, cmd_args: CommandLineArguments) -> Result<(), Failu
 
     executor::execute_operations(&operations, cmd_args.dry_run)?;
 
-    println!("Finished.");
+    println!("\nFinished.");
     return Ok(());
 }
 

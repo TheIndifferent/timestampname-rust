@@ -11,6 +11,7 @@ mod tiff;
 mod quicktime;
 mod mp4;
 mod cr3;
+mod jpeg;
 
 pub fn extract_metadata_creation_timestamp(path: &PathBuf, utc: bool) -> Result<Option<FileMetadata>, Failure> {
     let ext: String = path.extension()
@@ -22,6 +23,8 @@ pub fn extract_metadata_creation_timestamp(path: &PathBuf, utc: bool) -> Result<
         "dng" => tiff::tiff_extract_metadata_creation_timestamp(&mut Input::create(&InputBox::create(path, ext)?)),
         "mp4" => mp4::mp4_extract_metadata_creation_timestamp(&mut Input::create(&InputBox::create(path, ext)?), utc),
         "cr3" => cr3::cr3_extract_metadata_creation_timestamp(&mut Input::create(&InputBox::create(path, ext)?)),
+        "jpg" => jpeg::jpeg_extract_metadata_creation_timestamp(&mut Input::create(&InputBox::create(path, ext)?)),
+        "jpeg" => jpeg::jpeg_extract_metadata_creation_timestamp(&mut Input::create(&InputBox::create(path, ext)?)),
         _ => Ok(None)
     }
 }
