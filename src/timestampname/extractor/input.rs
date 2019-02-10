@@ -111,7 +111,7 @@ impl<'f> Input<'f> {
     pub fn section(&mut self, len: u64) -> Input<'f> {
         return Input {
             file: self.file,
-            offset: self.cursor,
+            offset: self.offset + self.cursor,
             limit: len,
             cursor: 0,
         };

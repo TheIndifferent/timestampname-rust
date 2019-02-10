@@ -23,7 +23,7 @@ fn format_mp4_timestamp(timestamp: u64, input: &mut Input, utc: bool) -> Result<
     return Ok(Some(FileMetadata {
         file_name: input.name().to_string(),
         creation_timestamp: formatted,
-        extension: input.ext().to_string(),
+        extension: format!(".{}", input.ext()),
     }));
 }
 
