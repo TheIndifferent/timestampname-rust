@@ -1,13 +1,10 @@
-use std::fs::File;
 use std::io;
 use std::io::ErrorKind;
 use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
-use std::path::Path;
 
 use super::Endianness;
-use super::Failure;
 use super::inputbox::InputBox;
 
 pub struct Input<'f> {

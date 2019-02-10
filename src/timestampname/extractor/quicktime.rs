@@ -45,11 +45,11 @@ impl<'f> Input<'f> {
         }
     }
 
-    fn quicktime_search_box(&mut self, box_name: &str) -> io::Result<Input> {
+    pub fn quicktime_search_box(&mut self, box_name: &str) -> io::Result<Input> {
         return self.quicktime_scan_for_box(box_name, None);
     }
 
-    fn quicktime_search_uuid_box(&mut self, box_uuid: (u64, u64)) -> io::Result<Input> {
+    pub fn quicktime_search_uuid_box(&mut self, box_uuid: (u64, u64)) -> io::Result<Input> {
         return self.quicktime_scan_for_box(&"uuid", Some(box_uuid));
     }
 }

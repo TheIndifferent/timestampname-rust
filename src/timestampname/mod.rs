@@ -82,7 +82,7 @@ fn process_files(files: Vec<PathBuf>, utc: bool) -> Result<CollectedMetadata, Fa
     let mut longest_source_name: usize = 0;
     for (index, element) in files.iter().enumerate() {
         print!("\rProcessing files: {}/{}...", index + 1, files.len());
-        let md: Option<FileMetadata> = extractor::extract_metadata_creation_timestamp(element)?;
+        let md: Option<FileMetadata> = extractor::extract_metadata_creation_timestamp(element, utc)?;
         match md {
             Some(x) => {
                 if x.file_name.len() > longest_source_name {

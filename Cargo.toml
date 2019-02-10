@@ -5,3 +5,4 @@ authors = ["Stanislav Baiduzhyi <baiduzhyi.devel@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+chrono = "0.4"
