@@ -1,11 +1,9 @@
-use std::path::PathBuf;
-
-use super::FileMetadata;
-use super::Failure;
-use crate::timestampname::extractor::Endianness;
 use std::error::Error;
-use super::Input;
-use std::fs::File;
+
+use super::Endianness;
+use super::Failure;
+use super::FileMetadata;
+use super::input::Input;
 
 struct TiffError {
     description: String,
@@ -26,37 +24,23 @@ fn tiff_err_cause<E: Error>(description: String, cause: E) -> TiffError {
     };
 }
 
-pub fn tiff_extract_metadata_creation_timestamp_file(path: &PathBuf, ext: &String) -> Result<Option<FileMetadata>, Failure> {
-    let file_name: String = path.file_name()
-        .and_then(|f| f.to_str())
-        .map(|f| f.to_string())
-        .expect("TIFF got path without a file name");
-    let mut file = File::open(path)
-        .map_err(|e| Failure::file_failure_caused(
-            file_name.to_string(),
-            "failed to open file".to_string(),
-            e))?;
-    let mut input = Input::create(&file)
-        .map_err(|e| Failure::file_failure_caused(
-            file_name.to_string(),
-            "failed to resolve file metadata".to_string(),
-            e))?;
-    return tiff_extract_metadata_creation_timestamp(&mut input)
+pub fn tiff_extract_metadata_creation_timestamp(input: &mut Input) -> Result<Option<FileMetadata>, Failure> {
+    return tiff_extract_metadata_creation_timestamp_impl(input)
         .map(|t| {
             Some(FileMetadata {
-                file_name: file_name.to_string(),
+                file_name: input.name().to_string(),
                 creation_timestamp: t,
-                extension: format!(".{}", ext),
+                extension: format!(".{}", input.ext().to_string()),
             })
         })
         .map_err(|e| Failure::file_failure_strcause(
-            file_name,
+            input.name().to_string(),
             e.description,
             e.cause));
 }
 
 // https://www.adobe.io/content/dam/udp/en/open/standards/tiff/TIFF6.pdf
-fn tiff_extract_metadata_creation_timestamp(input: &mut Input) -> Result<String, TiffError> {
+fn tiff_extract_metadata_creation_timestamp_impl(input: &mut Input) -> Result<String, TiffError> {
     // Bytes 0-1: The byte order used within the file. Legal values are:
     // “II” (4949.H)
     // “MM” (4D4D.H)

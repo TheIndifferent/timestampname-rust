@@ -1,9 +1,8 @@
-use std::path::PathBuf;
-use std::fs::File;
-
 use super::FileMetadata;
 use super::Failure;
-use super::FileInput;
+use super::Input;
+use super::quicktime;
 
-pub fn mp4_extract_metadata_creation_timestamp_file(path: &PathBuf, ext: &String) -> Result<Option<FileMetadata>, Failure> {
+pub fn mp4_extract_metadata_creation_timestamp(input: &mut Input) -> Result<Option<FileMetadata>, Failure> {
+    return Ok(None);
 }
