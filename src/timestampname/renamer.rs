@@ -59,7 +59,7 @@ pub fn prepare_rename_operations(mut items: Vec<FileMetadata>, no_prefix: bool) 
             true => format!("{}{}",
                             f.creation_timestamp,
                             f.extension),
-            false => format!("{:width$}-{}{}",
+            false => format!("{:0>width$}-{}{}",
                              i + 1,
                              f.creation_timestamp,
                              f.extension,
